@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f2eee5">
+<!-- ✏️ 浏览器标签页标题 -->
+<title>话术 · 兔子</title>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  /* ===== 封面：竖排叠字 ===== */
+  .cover { position: relative; height: 100vh; height: 100svh; min-height: 600px; overflow: hidden; }
+  .poem { position: absolute; top: calc(110px + var(--safe-t)); left: 0; right: 0; display: flex; flex-direction: row-reverse; justify-content: center; gap: 22px; }
+  .poem .col { font-size: 13px; color: var(--paper-dim); line-height: 1; }
+  .poem .col.faint { color: var(--mute); }
+  .poem .col span { display: inline-block; opacity: 0; filter: blur(6px); transform: translateY(-10px); transition: opacity 1s var(--ease-out), filter 1s, transform 1s var(--ease-out); }
+  .show .poem .col span { opacity: 1; filter: none; transform: none; }
+  .poem .col:nth-child(1) { margin-top: 70px; } .poem .col:nth-child(2) { margin-top: 0; }
+  .poem .col:nth-child(3) { margin-top: 130px; } .poem .col:nth-child(4) { margin-top: 30px; } .poem .col:nth-child(5) { margin-top: 170px; }
+  .bigchars { position: absolute; left: 0; right: 0; top: 46%; display: flex; justify-content: center; gap: 4px; }
+  .bigchars b { font-weight: 400; font-size: min(22vw, 110px); line-height: 1; color: var(--paper); opacity: 0; transform: scale(1.5); filter: blur(14px); transition: opacity 1.4s var(--ease-out), transform 1.4s var(--ease-out), filter 1.4s, color .5s; }
+  .bigchars b.ghost { color: transparent; -webkit-text-stroke: 1px rgba(35,52,80,.55); }
+  .show .bigchars b { opacity: 1; transform: none; filter: none; }
+  .bigchars b.drip { animation: drip 1.4s var(--ease-out); color: var(--blood-l); }
+  @keyframes drip { 30% { transform: translateY(16px) scaleY(1.15); filter: blur(1px); } 60% { transform: translateY(-6px); } }
+  .cover .cap { position: absolute; left: var(--pad); right: var(--pad); bottom: calc(46px + var(--safe-b)); display: flex; justify-content: space-between; align-items: flex-end; opacity: 0; transform: translateY(20px); transition: all 1.4s 2.2s var(--ease-out); }
+  .show .cap { opacity: 1; transform: none; }
+  .cover .cap small { font-family: var(--en); font-style: italic; font-size: 12px; letter-spacing: 3px; color: var(--blood-l); }
+  .cover .cap h1 { font-weight: 400; font-size: 40px; letter-spacing: .4em; margin-top: 6px; }
+  .cover .cap p { font-size: 11px; letter-spacing: 3px; color: var(--mute); text-align: right; line-height: 2; }
+
+  /* ===== 话术与手机模型 ===== */
+  .gallery { position: relative; padding: 100px 0 90px; }
+  .g-top { padding: 0 var(--pad); display: flex; justify-content: center; align-items: baseline; margin-bottom: 40px; }
+  .g-top b { font-weight: 400; font-size: 13px; letter-spacing: .5em; color: var(--paper-dim); }
+
+  /* 手机外壳 */
+  .phone-wrap { display: flex; justify-content: center; padding: 0 var(--pad); }
+  .phone-mockup { 
+    position: relative; width: min(100%, 380px); height: 800px; max-height: 85vh;
+    background: #ffffff; border: 10px solid #1a1a1a; border-radius: 46px; 
+    box-shadow: 0 40px 80px rgba(0,0,0,.15), inset 0 0 0 2px #444; 
+    display: flex; flex-direction: column; overflow: hidden; 
+  }
+  /* 刘海 */
+  .notch { 
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%); 
+    width: 130px; height: 26px; background: #1a1a1a; 
+    border-radius: 0 0 16px 16px; z-index: 30; 
+  }
+
+  /* 启动遮罩 */
+  .phone-start { 
+    position: absolute; inset: 0; background: #ffffff; z-index: 20; 
+    display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    transition: opacity .4s; text-align: center; padding: 20px;
+  }
+  .phone-start h3 { font-size: 26px; letter-spacing: .2em; color: #232e46; margin-bottom: 12px; font-weight: 400; }
+  .phone-start p { font-size: 13px; color: #888; letter-spacing: 3px; margin-bottom: 40px; }
+  .phone-start button { 
+    padding: 14px 40px; border-radius: 30px; background: #96deff; color: #fff; 
+    font-size: 15px; letter-spacing: 2px; box-shadow: 0 10px 20px rgba(150,222,255,.4); 
+    transition: transform .2s, filter .2s; border: none; cursor: pointer;
+  }
+  .phone-start button:hover { filter: brightness(1.05); }
+  .phone-start button:active { transform: scale(.95); }
+
+  /* ===== 手机内界面 ===== */
+  .s-head { display: flex; justify-content: space-between; align-items: center; padding: 36px 20px 16px; border-bottom: 1px solid #f0f0f0; }
+  .s-head .who { display: flex; align-items: center; gap: 12px; }
+  .s-head .av { position: relative; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #96deff; color: #fff; font-family: var(--en); font-style: italic; font-size: 18px; }
+  .s-head .av::after { content: ""; position: absolute; right: 0; bottom: 0; width: 9px; height: 9px; border-radius: 50%; background: #6fcf97; border: 2px solid #fff; }
+  .s-head .nm b { display: block; font-weight: 400; font-size: 15px; letter-spacing: 2px; color: #96deff; }
+  .s-head .nm small { font-size: 11px; color: #96deff; letter-spacing: 2px; transition: color .3s; }
+  .s-head .nm small.typing { color: #96deff; }
+  .s-head .ttl { font-size: 11px; letter-spacing: 2px; color: #555; text-align: right; line-height: 1.6; }
+  
+  .chat { flex: 1; overflow-y: auto; padding: 24px 18px 20px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: none; overscroll-behavior: contain; background: #ffffff; }
+  .chat::-webkit-scrollbar { display: none; }
+  .chat .time { text-align: center; font-size: 11px; letter-spacing: 3px; color: #999; margin: 6px 0 8px; }
+  .msg { max-width: 82%; padding: 11px 15px; font-size: 14.5px; line-height: 1.85; letter-spacing: .5px; animation: msg .6s var(--ease-out) both; }
+  
+  /* 左侧气泡（兔子） */
+  .msg.me { align-self: flex-start; background: #f9f9f9; border: 1px solid #e5e5e5; color: #96deff; border-radius: 20px 20px 20px 4px; }
+  /* 右侧气泡（老板） */
+  .msg.you { align-self: flex-end; background: #96deff; color: #fff; border-radius: 20px 20px 4px 20px; }
+  
+  .msg.dots { display: flex; gap: 5px; padding: 15px 17px; }
+  .msg.dots i { width: 6px; height: 6px; border-radius: 50%; background: #96deff; animation: dot 1.2s infinite; }
+  .msg.dots i:nth-child(2) { animation-delay: .15s; } .msg.dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes dot { 30% { transform: translateY(-5px); opacity: .4; } }
+  @keyframes msg { from { opacity: 0; transform: translateY(16px) scale(.94); filter: blur(4px); } }
+  .chat .end { align-self: center; margin-top: 16px; font-size: 11px; letter-spacing: 4px; color: #999; animation: msg .8s var(--ease-out) both; }
+
+  /* ===== 选项区 ===== */
+  .choices { padding: 14px 18px 10px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #f0f0f0; max-height: 220px; overflow-y: auto; scrollbar-width: none; background: #ffffff; }
+  .choices::-webkit-scrollbar { display: none; }
+  .choices:empty { display: none; }
+  .choices button { 
+    text-align: left; padding: 12px 16px; border: 1px solid transparent; border-radius: 20px; 
+    font-size: 14px; letter-spacing: .5px; color: #fff !important; background: #96deff; 
+    transition: filter .3s, transform .15s; flex: none; cursor: pointer;
+  }
+  .choices button:hover { filter: brightness(1.05); }
+  .choices button:active { transform: scale(.98); }
+
+  /* 底部操作 */
+  .s-foot { display: flex; justify-content: space-between; padding: 14px 20px 24px; border-top: 1px solid #f0f0f0; font-size: 12px; letter-spacing: 2px; color: #888; background: #ffffff; }
+  .s-foot button { padding: 6px 4px; color: #232e46 !important; font-weight: 500; cursor: pointer; }
+</style>
+</head>
+<body>
+<main class="page">
+
+<header class="cover" id="cover">
+  <!-- ✏️ 封面竖排诗句：一个 span 一列，带 faint 的颜色浅一些 -->
+  <div class="poem" data-gyro="-10">
+    <span class="col vt">他们说南方有永不凋零的春天</span>
+    <span class="col vt faint">于是我折断翅膀往南飞</span>
+    <span class="col vt">却在半空看见</span>
+    <span class="col vt faint">自己的影子正被夕阳拉长</span>
+    <span class="col vt">自己的影子正被夕阳拉长</span>
+  </div>
+  <!-- ✏️ 封面四个大字：带 class="ghost" 的是空心字 -->
+  <div class="bigchars" id="bigchars" data-gyro="18">
+    <b class="ghost">刻</b><b>舟</b><b class="ghost">求</b><b>剑</b>
+  </div>
+  <div class="cap">
+    <div><small>No. 03 · Lines</small><h1>话术</h1></div>
+    <p>轻触大字<br>向下滑动</p>
+  </div>
+</header>
+
+<!-- ✏️ 间奏竖排：每个 <p class="vt"> 是一列，<em></em> 里的字会高亮 -->
+<section class="interlude">
+  <div class="pin">
+    <p class="vt">话很轻</p>
+    <p class="vt">却刚好落在<em>最软</em>的地方</p>
+  </div>
+  <span class="cap">— lines —</span>
+</section>
+
+<section class="gallery" id="gallery">
+  <div class="g-top" data-reveal><b>轻 触 开 局</b></div>
+  
+  <div class="phone-wrap" data-reveal>
+    <div class="phone-mockup">
+      <div class="notch"></div>
+      
+      <!-- 屏幕启动遮罩 -->
+      <div class="phone-start" id="phoneStart">
+        <h3>今晚 · 单内</h3>
+        <p>选一个开场</p>
+        <button id="startBtn">启 动 对 话</button>
+      </div>
+
+      <!-- 聊天界面 -->
+      <div class="s-head" id="shead">
+        <div class="who"><span class="av">兔</span><div class="nm"><b>兔子</b><small id="status">在线</small></div></div>
+        <div class="ttl" id="sTtl">互动<br>开场</div>
+      </div>
+      
+      <div class="chat" id="chat"></div>
+      <div class="choices" id="choices"></div>
+      
+      <div class="s-foot">
+        <button id="undo">上一步</button>
+        <button id="replay">重 来</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ✏️ “更多请见”文档链接：href 和 <em> 里写链接，<span> 写标题；不要可以整段删掉 -->
+<!--<a class="more-doc" href="https://www.kdocs.cn/l/ccIqM10sclKa" target="_blank" rel="noopener" data-reveal>
+  <small>更多请见</small>
+  <span>我会驻足于你的门前，等待你为我开门的时刻</span>
+  <em>www.kdocs.cn/l/ccIqM10sclKa</em>
+</a>-->
+<!-- ✏️ 页脚：<em> 里是英文名 -->
+<footer class="foot">© <em>兔子</em></footer>
+</main>
+
+<script src="assets/base.js"></script>
+<script>
+// 初始直接给出的三个选择
+const START = {
+  choices: [
+    { label: '今天有空吗', to: 'a1' },
+    { label: '你又在约别人', to: 'b1' },
+    { label: '跟你没话说我要走了', to: 'c1' }
+  ]
+};
+
+const NODES = {
+  /* ===== 分支一：今天有空吗 ===== */
+  a1: { me: '可能，有什么事吗', choices: [
+    { label: '没什么', to: 'a1_x' },
+    { label: '没有', to: 'a1_y' },
+    { label: '我想见你了', to: 'a2' }
+  ]},
+  a1_x: { me: '？', end: true },
+  a1_y: { me: '好的呀，先不聊了，我还有约', end: true },
+  
+  a2: { me: '那我没空了', choices: [
+    { label: '哦哦。', to: 'a2_1' },
+    { label: '我咬死你。', to: 'a2_2' },
+    { label: '你不喜欢我的话，陪我聊那么久干嘛。', to: 'a2_3' }
+  ]},
+  a2_1: { me: '不玩这个', next: 'a2_1x' },
+  a2_1x: { you: '好遗憾...', end: true },
+  
+  a2_2: { me: '你是个好狗吗', choices: [
+    { label: '汪汪...', to: 'a2_2x' },
+    { label: '你找我试试不就知道了', to: 'a2_2y' }
+  ]},
+  a2_2x: { end: true },
+  a2_2y: { me: '下次一定', end: true },
+  
+  a2_3: { me: '有狗为什么不追', choices: [
+    { label: '哦哦。', to: 'a2_1' },
+    { label: '我咬死你。', to: 'a2_2' }
+  ]},
+
+  /* ===== 分支二：你又在约别人 ===== */
+  b1: { me: '是呐，你吃醋了吗', choices: [
+    { label: '对', to: 'b2' },
+    { label: '我讨厌你，别跟我说话了', to: 'b3' }
+  ]},
+  b2: { me: '我们有这么熟吗宝宝', choices: [
+    { label: '......', to: 'b2_x' },
+    { label: '我讨厌你，别跟我说话了', to: 'b3' }
+  ]},
+  b2_x: { end: true },
+  b3: { me: '真的讨厌我吗', choices: [
+    { label: '讨厌死了！', to: 'b4' },
+    { label: '要说实话吗？', to: 'b4_x' },
+    { label: '不讨厌，但是什么时候轮到我', to: 'b4_y' }
+  ]},
+  b4: { me: '我喜欢你！不要讨厌我', choices: [
+    { label: '你对谁都这么说吗。', to: 'b4_1' },
+    { label: '我也喜欢你！', to: 'b4_2' }
+  ]},
+  b4_1: { me: '我不识字先走了', end: true },
+  b4_2: { end: true },
+  b4_x: { end: true },
+  b4_y: { me: '这边建议主动来约我', end: true },
+
+  /* ===== 分支三：跟你没话说我要走了 ===== */
+  c1: { me: '真的要走吗宝宝', choices: [
+    { label: '我真的要走了', to: 'c1_x' },
+    { label: '我困了，明天见！', to: 'c2' },
+    { label: '你怎么对谁都这样', to: 'c3' },
+    { label: '我不走。', to: 'c4' }
+  ]},
+  c1_x: { end: true },
+  
+  c2: { me: '会梦到我吗', choices: [
+    { label: '会', to: 'c2_1' },
+    { label: '不会', to: 'c2_x' }
+  ]},
+  c2_x: { end: true },
+  
+  c2_1: { me: '那梦里我好人坏人呀', choices: [
+    { label: '好人', to: 'c2_1a' },
+    { label: '坏人', to: 'c2_1b' },
+    { label: '不是人', to: 'c2_1c' },
+    { label: '爱人', to: 'c2_1c_3' }
+  ]},
+  c2_1a: { me: '那我很善良了', end: true },
+  c2_1b: { me: '? 哦哦', end: true },
+  
+  c2_1c: { me: '不是人是什么', choices: [
+    { label: '保密', to: 'c2_1c_1' },
+    { label: '小狗呀宝宝', to: 'c2_1c_2' }
+  ]},
+  c2_1c_1: { me: '我也没有很想知道了', end: true },
+  c2_1c_2: { me: '我不应该才是狗主人吗', end: true },
+  
+  c2_1c_3: { me: '你到底有多少爱人', choices: [
+    { label: '只有你一个', to: 'c2_1c_3a' },
+    { label: '我有事先走了。', to: 'c2_1c_3b' }
+  ]},
+  c2_1c_3a: { me: '希望是真的', end: true },
+  c2_1c_3b: { end: true },
+
+  c3: { me: '我不知道呀>_<', choices: [
+    { label: '又装傻', to: 'c3_1' },
+    { label: '我再也不和你说话了！', to: 'c3_x' }
+  ]},
+  c3_x: { end: true },
+  c3_1: { me: '我只是不想让你伤心而已', choices: [
+    { label: '......', to: 'c3_1a' },
+    { label: '哦哦！', to: 'c3_1b' }
+  ]},
+  c3_1a: { end: true },
+  c3_1b: { end: true },
+
+  c4: { me: '你不走我走了。', choices: [
+    { label: '纳尼？', to: 'c4_x' },
+    { label: '你哪我也要去', to: 'c4_y' }
+  ]},
+  c4_x: { end: true },
+  c4_y: { end: true }
+};
+
+(() => {
+  const { $, $$, buzz, clamp } = V;
+  V.init({ guard: true, sub: 'LINES', sky: { density: .8 } });
+
+  /* ---------- 封面 ---------- */
+  $$('.poem .col').forEach((c, ci) => {
+    const t = c.textContent; c.textContent = '';
+    [...t].forEach((ch, i) => { const s = document.createElement('span'); s.textContent = ch; s.style.transitionDelay = (ci * .3 + i * .07) + 's'; c.append(s); });
+  });
+  const bigs = $$('#bigchars b');
+  bigs.forEach((b, i) => b.style.transitionDelay = (1.3 + i * .28) + 's');
+  setTimeout(() => $('#cover').classList.add('show'), 350);
+  setTimeout(() => bigs.forEach(b => b.style.transitionDelay = ''), 3600);
+  const drip = b => { b.classList.remove('drip'); void b.offsetWidth; b.classList.add('drip'); setTimeout(() => b.classList.remove('drip'), 1400); };
+  bigs.forEach(b => b.addEventListener('click', () => { drip(b); buzz(10); }));
+  setInterval(() => { if (scrollY < innerHeight) drip(bigs[Math.random() * bigs.length | 0]); }, 3800);
+
+  /* ---------- 手机互动对话 ---------- */
+  const chat = $('#chat'), status = $('#status'), choicesEl = $('#choices'), phoneStart = $('#phoneStart');
+  let gen = 0;
+  let historyStack = [];
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function addMsg(who, text) {
+    const d = document.createElement('div');
+    d.className = `msg ${who}`;
+    d.textContent = text;
+    chat.append(d);
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function showTyping() {
+    status.textContent = '对方正在输入…'; status.classList.add('typing');
+    chat.insertAdjacentHTML('beforeend', '<div class="msg me dots"><i></i><i></i><i></i></div>');
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function hideTyping() {
+    chat.querySelector('.dots')?.remove();
+    status.textContent = '在线'; status.classList.remove('typing');
+  }
+  function addEnd() {
+    chat.insertAdjacentHTML('beforeend', '<div class="end">— 结局 —</div>');
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  async function runNode(id, g) {
+    if (g !== gen) return;
+    const n = NODES[id];
+    if (!n) return;
+    if (n.you) {
+      addMsg('you', n.you);
+      await wait(420);
+      if (g !== gen) return;
+    }
+    if (n.me) {
+      showTyping();
+      await wait(520 + Math.min(1000, n.me.length * 35));
+      if (g !== gen) return;
+      hideTyping();
+      addMsg('me', n.me);
+      await wait(260);
+      if (g !== gen) return;
+    }
+    if (n.choices) { showChoices(n.choices, g); return; }
+    if (n.next) { return runNode(n.next, g); }
+    if (n.end) { addEnd(); }
+  }
+
+  function showChoices(list, g) {
+    choicesEl.innerHTML = '';
+    list.forEach(c => {
+      const b = document.createElement('button');
+      b.textContent = c.label;
+      b.addEventListener('click', () => {
+        if (g !== gen) return;
+        
+        // 记录快照
+        historyStack.push({ html: chat.innerHTML, choices: list });
+        
+        addMsg('you', c.label);
+        choicesEl.innerHTML = '';
+        buzz(6);
+        runNode(c.to, g);
+      });
+      choicesEl.append(b);
+    });
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function startTree() {
+    const g = ++gen;
+    historyStack = [];
+    chat.innerHTML = `<div class="time">— 今晚 · 单内 —</div>`;
+    choicesEl.innerHTML = '';
+    status.textContent = '在线'; status.classList.remove('typing');
+    showChoices(START.choices, g);
+  }
+
+  // 点击启动按钮
+  $('#startBtn').addEventListener('click', () => {
+    phoneStart.style.opacity = '0';
+    setTimeout(() => phoneStart.style.display = 'none', 300);
+    startTree();
+  });
+
+  // 返回上一步
+  $('#undo').addEventListener('click', () => {
+    if (historyStack.length === 0) return;
+    const prev = historyStack.pop();
+    
+    // 打断当前打字
+    gen++; 
+    const newG = gen;
+    
+    // 恢复界面
+    chat.innerHTML = prev.html;
+    chat.scrollTop = chat.scrollHeight;
+    choicesEl.innerHTML = '';
+    status.textContent = '在线'; status.classList.remove('typing');
+    
+    // 重新渲染选项
+    showChoices(prev.choices, newG);
+    buzz(8);
+  });
+
+  // 重来
+  $('#replay').addEventListener('click', startTree);
+
+})();
+</script>
+</body>
+</html>
